@@ -92,12 +92,18 @@
 
 
 
+server {
+    listen 80;
+    server_name l-gorman.com;
+    return 404;
+}
+
+
 # Configuring RHoMIS server
 server {
         listen 80;
-        listen [::]:80;
 
-        server_name l-gorman.com;
+        server_name auth.l-gorman.com;
 
         location / {
                 proxy_pass http://localhost:3002;
