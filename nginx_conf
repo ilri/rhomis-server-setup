@@ -94,15 +94,16 @@
 
 server {
     listen 80;
-    server_name l-gorman.com;
+    listen [::]:80;
+    server_name l-gorman.com www.l-gorman.com;
     return 404;
 }
 
 
-# Configuring RHoMIS server
+# Configuring RHoMIS authentication server
 server {
         listen 80;
-
+	listen 443 ssl;
         server_name auth.l-gorman.com;
 
         location / {
@@ -113,4 +114,33 @@ server {
                 proxy_set_header Host $host;
                 proxy_cache_bypass $http_upgrade;
         }
+
+	# ssl configuration
+
+	ssl_certificate /etc/letsencrypt/live/api.l-gorman.com/fullchain.pem;
+
+	ssl_certificate_key /etc/letsencrypt/live/api.l-gorman.com/privkey.pem;
+}
+
+# Configuring RHoMIS api server
+
+server {
+	listen 80;
+	listen 443 ssl;
+	server_name api.l-gorman.com;
+
+	location / {
+		proxy_pass http://localhost:3001;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+	}
+
+	# ssl configuration
+	ssl_certificate /etc/letsencrypt/live/api.l-gorman.com/fullchain.pem;
+
+	ssl_certificate_key /etc/letsencrypt/live/api.l-gorman.com/privkey.pem;
+
 }
